@@ -1,0 +1,21 @@
+/* En este archivo estarán los estilos que necesariamente tengán que ser escritos (extra a los estilos predefinidos de bootstrap) */
+:root {
+    --padding-contenedor: 60px 0;
+}
+
+.contenedor {
+    width: 90%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: var(--padding-contenedor);
+    overflow: hidden;
+}
+
+.principal {
+    display: grid;
+    grid-template-rows: 80px 1fr;
+}
+
+.barra {
+    --padding-contenedor: 0;
+}
