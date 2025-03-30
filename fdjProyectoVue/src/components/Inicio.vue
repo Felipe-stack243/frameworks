@@ -10,7 +10,7 @@
                         <li class="breadcrumb-item active">inicio</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Modifique el titulo 👋</h4>
+                <h4 class="page-title">Modifique el titulo 👋 diana</h4>
             </div>
         </div>
     </div>
