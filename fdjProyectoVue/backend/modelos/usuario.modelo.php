@@ -6,29 +6,35 @@
         // VALIDACIÓN DE ACCESO DE USUARIO
         public static function mdlValidarAcceso($objetoUsuario)
         {
-            $sql = "SELECT
-                        us.idUsuario,
-                        CONCAT(us.nombre,' ',us.primApellido,' ',us.segApellido) AS nombreUsuario,
-                        us.correo,
-                        us.telefono,
-                        us.usuario,
-                        us.password,
-                        us.idUsuarioRol,
-                        rl.rol,
-                        us.estatus
-                    FROM usuarios us
-                    JOIN usuarios_roles rl ON us.idUsuarioRol = rl.idUsuarioRol
-                    WHERE us.usuario = :usuario;";
+            // RESPUESTA QUE SERÁ CONVERTIDA A JSON ENCONDE MÁS ADELANTE / POR DEFECTO TENDRÁ ERROR
+            $respuesta = [
+                "status"  => "error",
+                "message" => "Ha ocurrido un error en la consulta"
+            ];
 
-            $stmt = Conexion::getBD()->prepare($sql); // Preparo mi consulta
+            $sql = "
+                SELECT
+                    us.idUsuario,
+                    CONCAT(us.nombre,' ',us.primApellido,' ',us.segApellido) AS nombreUsuario,
+                    us.correo,
+                    us.telefono,
+                    us.usuario,
+                    us.password,
+                    us.idUsuarioRol,
+                    rl.rol,
+                    us.estatus
+                FROM usuarios us
+                JOIN usuarios_roles rl ON us.idUsuarioRol = rl.idUsuarioRol
+                WHERE us.usuario = :usuario;
+            ";
+
+            $stmt = Conexion::getBD()->prepare($sql);
             $stmt->bindValue(":usuario", $objetoUsuario->getUsuario(), PDO::PARAM_STR);
 
-            $stmt->execute(); // Ejecuto mi consulta
-            $dato = $stmt->fetch(PDO::FETCH_ASSOC); // Obtengo el resultado como un array asosiativo
+            $stmt->execute();
+            $dato = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            $respuesta = ""; // Mensaje para enviar en el formulario de login
-
-            if($dato) // Pregunto si obtuve una consulta que haya coincidido con el usuario ingresado por teclado
+            if($dato)
             {
                 $password = $dato["password"];
                 if($password == md5($objetoUsuario->getPassword()))
@@ -46,27 +52,39 @@
                         $_SESSION["rol"]           = $dato["rol"];
                         $_SESSION["estatus"]       = $dato["estatus"];
 
-                        $respuesta = "OK";
+                        $respuesta = [
+                            "status"  => "success",
+                            "message" => "OK"
+                        ];
                     }
 
                     else 
-                    {
-                        $respuesta = "Tu usuario ha sido deshabilitado, contacta al administrador";
+                    {   
+                        $respuesta = [
+                            "status"  => "error",
+                            "message" => "Tu usuario ha sido deshabilitado, contacta al administrador"
+                        ];
                     }
                 }
                 
                 else
                 {
-                    $respuesta = "Tu contraseña es incorrecta";
+                    $respuesta = [
+                        "status"  => "error",
+                        "message" => "Tu contraseña es incorrecta"
+                    ];
                 }
             }
 
             else 
             {
-                $respuesta = "No existe el usuario <strong>".$objetoUsuario->getUsuario()."</strong>";
+                $respuesta = [
+                    "status"  => "error",
+                    "message" => "No existe el usuario <strong>".$objetoUsuario->getUsuario()."</strong>"
+                ];
             }
 
-            return $respuesta;
+            return json_encode($respuesta);
         }
     }
 ?>

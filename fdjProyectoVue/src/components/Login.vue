@@ -1,29 +1,44 @@
 <script setup>
     import { ref } from "vue";
+    import { useRouter } from "vue-router";
 
     const usuario  = ref("");
     const password = ref("");
     const mensaje  = ref("");
+    const router   = useRouter();
 
     const validarAcceso = async () => {
         const datos = {
+            operacion: "iniciarSesion",
             usuario: usuario.value,
             password: password.value
         };
 
         try {
-            const respuesta = await fetch("http://localhost/EjMascota/php/Registro.php", {
+            const respuesta = await fetch("http://localhost/frameworks/fdjProyectoVue/backend/fetch/login.fetch.php", {
                 method: "POST",
+                credentials: 'include', // Es necesario para trabajar con variables de sesión ya que trabajaremos con credenciales
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(datos),
             });
 
             const resultado = await respuesta.json();
-            mensaje.value = resultado.mensaje;
+            mensaje.value = resultado.message;
 
-            // Limpiar los campos después del registro exitoso
-            if (resultado.mensaje != "OK") {
-                router.push('/inicio');
+            // Si el acceso es exitoso, redirigir al usuario
+            if (resultado.status === "success") {
+                router.push("/inicio");
+            }
+
+            else {
+                $.toast({
+                    heading: 'Aviso importante',
+                    text: resultado.message,
+                    position: 'top-right',
+                    icon: 'error',
+                    hideAfter: 6000,
+                    stack: false
+                });
             }
         }
         

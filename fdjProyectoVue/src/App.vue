@@ -1,32 +1,47 @@
 <script setup>
     import { RouterLink, RouterView } from 'vue-router';
-    import { ref, onMounted } from 'vue';
+    import { ref, watchEffect, onMounted, triggerRef } from 'vue';
 
-    const accesoValido = ref(false);
-    const idUsuario    = ref(null);
+    // Estado activo de la sesión:
+    // Definir la sesión como un `ref()`
+    const sesion = ref({
+        accesoValido  : false,
+        idUsuario     : null,
+        nombreUsuario : null,
+        correo        : null,
+        telefono      : null,
+        usuario       : null,
+        password      : null,
+        idUsuarioRol  : null,
+        rol           : null,
+        estatus       : null
+    });
 
-    onMounted(async () => {
+    // Función para verificar sesión
+    const verificarSesion = async () => {
         try {
-            const response = await fetch('http://localhost/frameworks/fdjProyectoVue/backend/controladores/validarSesion.controlador.php', {
+            const response = await fetch('http://localhost/frameworks/fdjProyectoVue/backend/fetch/validarSesion.fetch.php', {
                 credentials: 'include'  // Para que incluya las cookies de sesión
             });
 
             const datosSesion = await response.json();
 
-            if (datosSesion.acceso) {
-                accesoValido.value = true;
-                idUsuario.value    = datosSesion.idUsuario;
-            } 
-            
-            else {
-                accesoValido.value = false;
-                // router.push('/inicio');
-            }
+            // Actualizar el estado de la variable 'sesion'
+            sesion.value = { ...datosSesion };
+
+            triggerRef(sesion);
         } 
         
         catch (error) {
             console.error("Error al verificar la sesión:", error);
         }
+    };
+
+    onMounted(verificarSesion);
+
+    // watchEffect para reaccionar a cambios en sesión
+    watchEffect(() => {
+        console.log("Estado de sesión actualizado:", sesion.accesoValido);
     });
 </script>
 
@@ -65,7 +80,7 @@
                             </div>
 
                             <!-- Si hay sesion activa, entonces digo que el usuario puede cerrar sesión -->
-                            <router-link v-if="accesoValido" to="" class="dropdown-item notify-item">
+                            <router-link v-if="sesion.accesoValido" to="" class="dropdown-item notify-item">
                                 <i class="fe-log-out"></i>
                                 <span>Cerrar sesión</span>
                             </router-link>
@@ -97,7 +112,7 @@
         </div>
         
         <!-- Menú de opciones -->
-        <div v-if="accesoValido" class="topbar-menu">
+        <div v-if="sesion.accesoValido" class="topbar-menu">
             <div class="container-fluid">
                 <div id="navigation">
                     <ul class="navigation-menu">
@@ -127,7 +142,7 @@
     </header>
 
     <!-- CONTENIDO -->
-    <div class="wrapper" v-bind:class="accesoValido ? '' : 'pt-5'">
+    <div class="wrapper" v-bind:class="sesion.accesoValido ? '' : 'pt-5'">
         <div class="container-fluid">
             <router-view></router-view>
         </div> 
