@@ -1,4 +1,16 @@
 <script setup>
+    import { useSessionStore } from "@/stores/sessionStore";
+    import { onMounted, watch } from "vue";
+
+    const sessionStore = useSessionStore();
+
+    onMounted(() => {
+        sessionStore.verificarSesion(); // Verifica la sesión al cargar la app
+    });
+
+    watch(() => sessionStore.accesoValido, (nuevoValor) => {
+        console.log("Estado de sesión actualizado:", nuevoValor);
+    });
 </script>
 
 <template>
@@ -10,7 +22,7 @@
                         <li class="breadcrumb-item active">inicio</li>
                     </ol>
                 </div>
-                <h4 class="page-title">Modifique el titulo 👋 diana</h4>
+                <h4 class="page-title">Bienvenido de nuevo {{ sessionStore.usuario || "" }} 👋</h4>
             </div>
         </div>
     </div>

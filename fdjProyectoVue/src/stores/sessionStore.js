@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
-import { useRouter } from 'vue-router';
 
 import { ref } from 'vue';
 
 export const useSessionStore = defineStore('session', () => {
     const accesoValido  = ref(false);
     const idUsuario     = ref(null);
+    const usuario       = ref(null);
     const nombreUsuario = ref(null);
 
     const verificarSesion = async () => {
@@ -19,12 +19,14 @@ export const useSessionStore = defineStore('session', () => {
             if (datosSesion.acceso) {
                 accesoValido.value  = true;
                 idUsuario.value     = datosSesion.idUsuario;
+                usuario.value       = datosSesion.usuario;
                 nombreUsuario.value = datosSesion.nombreUsuario;
             } 
             
             else {
                 accesoValido.value  = false;
                 idUsuario.value     = null;
+                usuario.value       = null;
                 nombreUsuario.value = null;
             }
         } 
@@ -46,6 +48,7 @@ export const useSessionStore = defineStore('session', () => {
             if (resultado.success) {
                 accesoValido.value  = false;
                 idUsuario.value     = null;
+                usuario.value       = null;
                 nombreUsuario.value = null;
 
                 return true;
@@ -62,5 +65,5 @@ export const useSessionStore = defineStore('session', () => {
         }
     };
 
-    return { accesoValido, idUsuario, nombreUsuario, verificarSesion, cerrarSesion };
+    return { accesoValido, idUsuario, usuario, nombreUsuario, verificarSesion, cerrarSesion };
 });

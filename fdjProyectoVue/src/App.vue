@@ -47,7 +47,7 @@
                             </div>
 
                             <!-- Si hay sesion activa, entonces digo que el usuario puede cerrar sesión -->
-                            <router-link v-if="sessionStore.accesoValido" to="" class="dropdown-item notify-item" @click="sessionStore.cerrarSesion">
+                            <router-link v-if="sessionStore.accesoValido" to="laboratorios" class="dropdown-item notify-item" @click="sessionStore.cerrarSesion">
                                 <i class="fe-log-out"></i>
                                 <span>Cerrar sesión</span>
                             </router-link>
@@ -109,7 +109,7 @@
     </header>
 
     <!-- CONTENIDO -->
-    <div class="wrapper" v-bind:class="accesoValido ? '' : 'pt-5'">
+    <div class="wrapper" v-bind:class="sessionStore.accesoValido ? '' : 'pt-5'">
         <div class="container-fluid">
             <router-view></router-view>
         </div> 

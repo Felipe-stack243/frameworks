@@ -12,7 +12,10 @@
         {
             $respuesta = ModeloLaboratorio::mdlMostrarLaboratorios();
             
-            return $respuesta;
+            echo $respuesta;
         }
     }
+
+    // Llamar la función para ejecutar la consulta
+    FetchLaboratorios::fetchMostrarLaboratorios();
 ?>

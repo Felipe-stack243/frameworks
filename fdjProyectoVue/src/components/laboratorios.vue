@@ -54,7 +54,7 @@
                                 class="avatar-sm rounded-circle d-flex align-items-center justify-content-center p-4 m-auto"
                                 :style="{
                                     'background-color': lab.idLaboratorioEstatus === 3 ? 'rgba(248, 204, 107, .2)' : 
-                                                        lab.idLaboratorioEstatus === 4 ? 'rgba(240, 100, 59, .2)' : 'bg-light'
+                                                        lab.idLaboratorioEstatus === 4 ? 'rgba(240, 100, 59, .2)' : '#f1f5f7'
                                 }"
                             >
                                 <h3 class="card-title m-0" :class="{
@@ -67,6 +67,7 @@
                                 </h3>
                             </div>
                         </div>
+                        
                         <div class="col-9 d-flex flex-column align-items-start justify-content-center">
                             <h5 :class="{
                                 'text-secondary': lab.idLaboratorioEstatus === 1,
@@ -74,6 +75,7 @@
                                 'text-warning': lab.idLaboratorioEstatus === 3,
                                 'text-danger': lab.idLaboratorioEstatus === 4
                             }">{{ lab.laboratorio }}</h5>
+                            
                             <small :class="{
                                 'badge badge-secondary': lab.idLaboratorioEstatus === 1,
                                 'badge badge-light-primary': lab.idLaboratorioEstatus === 2,
@@ -82,6 +84,7 @@
                             }" class="font-12">
                                 {{ lab.estatus }}
                             </small>
+
                             <p v-if="lab.idLaboratorioEstatus === 2" class="card-text mt-1">Profesor: {{ lab.docente }}</p>
                         </div>
                     </div>
