@@ -1,11 +1,13 @@
 <script setup>
     import { ref } from "vue";
     import { useRouter } from "vue-router";
+    import { useSessionStore } from "@/stores/sessionStore"; // Importo el store
 
     const usuario  = ref("");
     const password = ref("");
     const mensaje  = ref("");
     const router   = useRouter();
+    const sessionStore = useSessionStore(); // Instancio el store
 
     const validarAcceso = async () => {
         const datos = {
@@ -27,6 +29,7 @@
 
             // Si el acceso es exitoso, redirigir al usuario
             if (resultado.status === "success") {
+                await sessionStore.verificarSesion(); // Actualizó estado de sesión global
                 router.push("/inicio");
             }
 

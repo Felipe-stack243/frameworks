@@ -1,47 +1,15 @@
 <script setup>
-    import { RouterLink, RouterView } from 'vue-router';
-    import { ref, watchEffect, onMounted, triggerRef } from 'vue';
+    import { useSessionStore } from "@/stores/sessionStore";
+    import { onMounted, watch } from "vue";
 
-    // Estado activo de la sesión:
-    // Definir la sesión como un `ref()`
-    const sesion = ref({
-        accesoValido  : false,
-        idUsuario     : null,
-        nombreUsuario : null,
-        correo        : null,
-        telefono      : null,
-        usuario       : null,
-        password      : null,
-        idUsuarioRol  : null,
-        rol           : null,
-        estatus       : null
+    const sessionStore = useSessionStore();
+
+    onMounted(() => {
+        sessionStore.verificarSesion(); // Verifica la sesión al cargar la app
     });
 
-    // Función para verificar sesión
-    const verificarSesion = async () => {
-        try {
-            const response = await fetch('http://localhost/frameworks/fdjProyectoVue/backend/fetch/validarSesion.fetch.php', {
-                credentials: 'include'  // Para que incluya las cookies de sesión
-            });
-
-            const datosSesion = await response.json();
-
-            // Actualizar el estado de la variable 'sesion'
-            sesion.value = { ...datosSesion };
-
-            triggerRef(sesion);
-        } 
-        
-        catch (error) {
-            console.error("Error al verificar la sesión:", error);
-        }
-    };
-
-    onMounted(verificarSesion);
-
-    // watchEffect para reaccionar a cambios en sesión
-    watchEffect(() => {
-        console.log("Estado de sesión actualizado:", sesion.accesoValido);
+    watch(() => sessionStore.accesoValido, (nuevoValor) => {
+        console.log("Estado de sesión actualizado:", nuevoValor);
     });
 </script>
 
@@ -66,9 +34,8 @@
                         <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
                             <img src="/assets/images/users/sin-foto.png" alt="user-image" class="rounded-circle">
                             
-                            <!-- En esta etiqueta debes de validar que si no hay sesion activa muestres acceso y si la hay muestres el nombre de usuario -->
                             <span class="pro-user-name ml-1">
-                                Acceso
+                                {{ sessionStore.nombreUsuario || "Acceso" }} 
                                 <i class="mdi mdi-chevron-down"></i> 
                             </span>
                         </a>
@@ -80,12 +47,12 @@
                             </div>
 
                             <!-- Si hay sesion activa, entonces digo que el usuario puede cerrar sesión -->
-                            <router-link v-if="sesion.accesoValido" to="" class="dropdown-item notify-item">
+                            <router-link v-if="sessionStore.accesoValido" to="" class="dropdown-item notify-item" @click="sessionStore.cerrarSesion">
                                 <i class="fe-log-out"></i>
                                 <span>Cerrar sesión</span>
                             </router-link>
 
-                            <!-- Si no hay una sesión activa entonces deberá acceder al formulario de login -->
+                            <!-- Si no hay sesión, muestra "Iniciar sesión" -->
                             <router-link v-else to="login" class="dropdown-item notify-item">
                                 <i class="fe-user"></i>
                                 <span>Iniciar sesión</span>
@@ -112,7 +79,7 @@
         </div>
         
         <!-- Menú de opciones -->
-        <div v-if="sesion.accesoValido" class="topbar-menu">
+        <div v-if="sessionStore.accesoValido" class="topbar-menu">
             <div class="container-fluid">
                 <div id="navigation">
                     <ul class="navigation-menu">
@@ -124,7 +91,7 @@
                                 <li><router-link to="">Control de laboratorios</router-link></li>
                             </ul>
                         </li>
-    
+
                         <li class="has-submenu">
                             <a href="javascript:void(0);">
                                 <i class="fe-users"></i> Personal <div class="arrow-down"></div>
@@ -134,7 +101,7 @@
                             </ul>
                         </li>
                     </ul>
-            
+                
                     <div class="clearfix"></div>
                 </div>
             </div>
@@ -142,7 +109,7 @@
     </header>
 
     <!-- CONTENIDO -->
-    <div class="wrapper" v-bind:class="sesion.accesoValido ? '' : 'pt-5'">
+    <div class="wrapper" v-bind:class="accesoValido ? '' : 'pt-5'">
         <div class="container-fluid">
             <router-view></router-view>
         </div> 
