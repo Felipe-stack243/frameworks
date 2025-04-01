@@ -1,7 +1,28 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
+
+    const laboratorios = ref([]);
+
+    // Obtengo los laboratorios:
+    const consultaLaboratorios = async () => {
+        try {
+            const response = await fetch('http://localhost/frameworks/fdjProyectoVue/backend/fetch/laboratorios.fetch.php');
+            const data = await response.json();
+
+            laboratorios.value = data;
+        } 
+        
+        catch (error) {
+            console.error('Error al obtener los laboratorios desde el servidor:', error);
+        }
+    };
+
+    onMounted(() => {
+        consultaLaboratorios();
+    });
 </script>
+
 <template>
-    <div id="app">
     <div class="row">
         <div class="col-12">
             <div class="page-title-box">
@@ -16,94 +37,59 @@
     </div>
 
     <div class="row">
-        <div v-for="(laboratorio, index) in laboratorios" :key="index">
-            <!-- Condición para el estatus 1 -->
-            <div v-if="laboratorio.idLaboratorioEstatus == 1" class="col-lg-4">
-                <div class="card text-secondary bg-white text-xs-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center p-4 m-auto">
-                                    <h3 class="card-title m-0 text-secondary">{{ laboratorio.alias }}</h3>
-                                </div>
-                            </div>
-                            <div class="col-9 d-flex flex-column align-items-start justify-content-center">
-                                <h5 class="text-secondary">{{ laboratorio.laboratorio }}</h5>
-                                <small class="badge badge-secondary font-12">{{ laboratorio.estatus }}</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Condición para el estatus 2 -->
-            <div v-else-if="laboratorio.idLaboratorioEstatus == 2" class="col-lg-4">
-                <div class="card text-primary bg-white text-xs-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center p-4 m-auto">
-                                    <h3 class="card-title m-0 text-primary">{{ laboratorio.alias }}</h3>
-                                </div>
-                            </div>
-                            <div class="col-9 d-flex flex-column align-items-start justify-content-center">
-                                <h5 class="text-primary">{{ laboratorio.laboratorio }}</h5>
-                                <small class="badge badge-light-primary font-12">{{ laboratorio.estatus }}</small>
-                                <p class="card-text mt-1">Profesor: {{ laboratorio.docente }}</p>
+        <div v-for="lab in laboratorios" :key="lab.idLaboratorio" class="col-lg-4">
+            <div 
+                class="card text-xs-center" 
+                :class="{
+                    'text-secondary': lab.idLaboratorioEstatus === 1,
+                    'text-primary': lab.idLaboratorioEstatus === 2,
+                    'text-warning': lab.idLaboratorioEstatus === 3,
+                    'text-danger': lab.idLaboratorioEstatus === 4
+                }"
+            >
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div 
+                                class="avatar-sm rounded-circle d-flex align-items-center justify-content-center p-4 m-auto"
+                                :style="{
+                                    'background-color': lab.idLaboratorioEstatus === 3 ? 'rgba(248, 204, 107, .2)' : 
+                                                        lab.idLaboratorioEstatus === 4 ? 'rgba(240, 100, 59, .2)' : 'bg-light'
+                                }"
+                            >
+                                <h3 class="card-title m-0" :class="{
+                                    'text-secondary': lab.idLaboratorioEstatus === 1,
+                                    'text-primary': lab.idLaboratorioEstatus === 2,
+                                    'text-warning': lab.idLaboratorioEstatus === 3,
+                                    'text-danger': lab.idLaboratorioEstatus === 4
+                                }">
+                                    {{ lab.alias }}
+                                </h3>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Condición para el estatus 3 -->
-            <div v-else-if="laboratorio.idLaboratorioEstatus == 3" class="col-lg-4">
-                <div class="card text-warning bg-white text-xs-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center p-4 m-auto" style="background-color: rgba(248, 204, 107, .2);">
-                                    <h3 class="card-title m-0 text-warning">{{ laboratorio.alias }}</h3>
-                                </div>
-                            </div>
-                            <div class="col-9 d-flex flex-column align-items-start justify-content-center">
-                                <h5 class="text-warning">{{ laboratorio.laboratorio }}</h5>
-                                <small class="badge badge-light-warning font-12">{{ laboratorio.estatus }}</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Condición para el estatus 4 -->
-            <div v-else-if="laboratorio.idLaboratorioEstatus == 4" class="col-lg-4">
-                <div class="card text-danger bg-white text-xs-center">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center p-4 m-auto" style="background-color: rgba(240, 100, 59, .2)">
-                                    <h3 class="card-title m-0 text-danger">{{ laboratorio.alias }}</h3>
-                                </div>
-                            </div>
-                            <div class="col-9 d-flex flex-column align-items-start justify-content-center">
-                                <h5 class="text-danger">{{ laboratorio.laboratorio }}</h5>
-                                <small class="badge badge-light-danger font-12">{{ laboratorio.estatus }}</small>
-                            </div>
+                        <div class="col-9 d-flex flex-column align-items-start justify-content-center">
+                            <h5 :class="{
+                                'text-secondary': lab.idLaboratorioEstatus === 1,
+                                'text-primary': lab.idLaboratorioEstatus === 2,
+                                'text-warning': lab.idLaboratorioEstatus === 3,
+                                'text-danger': lab.idLaboratorioEstatus === 4
+                            }">{{ lab.laboratorio }}</h5>
+                            <small :class="{
+                                'badge badge-secondary': lab.idLaboratorioEstatus === 1,
+                                'badge badge-light-primary': lab.idLaboratorioEstatus === 2,
+                                'badge badge-light-warning': lab.idLaboratorioEstatus === 3,
+                                'badge badge-light-danger': lab.idLaboratorioEstatus === 4
+                            }" class="font-12">
+                                {{ lab.estatus }}
+                            </small>
+                            <p v-if="lab.idLaboratorioEstatus === 2" class="card-text mt-1">Profesor: {{ lab.docente }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-    new Vue({
-        el: '#app',
-        data: {
-            laboratorios: <?php echo json_encode($laboratorios); ?>
-        }
-    });
-</script>
 </template>
 
+<style scoped>
+</style>

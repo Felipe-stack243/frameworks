@@ -2,42 +2,44 @@
     require_once "conexion.php";
 
     class ModeloLaboratorio
-    {
+    {   
+        // Mostrar laboratorios
         public static function mdlMostrarLaboratorios()
         {
-            $sql = "SELECT 
-                        l.idLaboratorio,
-                        l.laboratorio, 
-                        l.alias, 
-                        l.idLaboratorioEstatus,
-                        CASE 
-                            WHEN l.idLaboratorioEstatus = 1 THEN 'SIN CLASE ASIGNADA'
-                            WHEN l.idLaboratorioEstatus = 2 THEN 'EN CLASE'
-                            WHEN l.idLaboratorioEstatus = 4 THEN 'EN MANTENIMIENTO'
-                            WHEN l.idLaboratorioEstatus = 3 THEN 'EN TRANSITO'
-                            ELSE 'DESCONOCIDO'
-                        END AS estatus,
+            $sql = "
+                SELECT 
+                    l.idLaboratorio,
+                    l.laboratorio, 
+                    l.alias, 
+                    l.idLaboratorioEstatus,
+                    CASE 
+                        WHEN l.idLaboratorioEstatus = 1 THEN 'SIN CLASE ASIGNADA'
+                        WHEN l.idLaboratorioEstatus = 2 THEN 'EN CLASE'
+                        WHEN l.idLaboratorioEstatus = 4 THEN 'EN MANTENIMIENTO'
+                        WHEN l.idLaboratorioEstatus = 3 THEN 'EN TRANSITO'
+                        ELSE 'DESCONOCIDO'
+                    END AS estatus,
 
-                        CASE 
-                            WHEN l.idLaboratorioEstatus = 2 THEN CONCAT(d.nombre, ' ', d.primApellido, ' ', d.segApellido) 
-                            ELSE NULL
-                        END AS docente,
+                    CASE 
+                        WHEN l.idLaboratorioEstatus = 2 THEN CONCAT(d.nombre, ' ', d.primApellido, ' ', d.segApellido) 
+                        ELSE NULL
+                    END AS docente,
 
-                        CASE 
-                            WHEN l.idLaboratorioEstatus = 2 THEN lo.hora 
-                            ELSE NULL
-                        END AS hora
-
-                    FROM laboratorios l
-                    LEFT JOIN laboratorios_operaciones lo ON l.idLaboratorio = lo.idLaboratorio
-                    LEFT JOIN docentes d ON lo.idDocente = d.idDocente
-                    GROUP BY l.idLaboratorio
-                    ORDER BY l.laboratorio ASC;
+                    CASE 
+                        WHEN l.idLaboratorioEstatus = 2 THEN lo.hora 
+                        ELSE NULL
+                    END AS hora
+                FROM laboratorios l
+                LEFT JOIN laboratorios_operaciones lo ON l.idLaboratorio = lo.idLaboratorio
+                LEFT JOIN docentes d ON lo.idDocente = d.idDocente
+                GROUP BY l.idLaboratorio
+                ORDER BY l.laboratorio ASC;
             ";
 
             $stmt = Conexion::getBD()->prepare($sql); // Preparo mi consulta
             $stmt->execute();
-            return $stmt->fetchAll();
+
+            return json_encode($stmt->fetchAll());
         }
 
         // MODELO PARA COLOCAR EN TRANSITO A UN LABORATORIO
