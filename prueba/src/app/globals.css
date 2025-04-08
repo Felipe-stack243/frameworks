@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
+}
+
+.contenedor {
+    width: 90%;
+    max-width: 1300px;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 60px 0;
+}
+
+body {
+    background-color: #f5f6f8;
+}
+
+/* Estilo para la calculadora */
+.carta {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 30px 25px;
+    border: 1px solid #cecece;
+    width: 350px;
+    margin: 0 auto;
+}
+
+.carta__titulo {
+    font-size: 1.1rem;
+    color: #f0643b;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.carta__inputs {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.carta__input { 
+    height: 40px; 
+}
+
+.carta__input--100 {
+    width: 100%;
+}
+
+.carta__campo {
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+}
+
+.input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ced4da;
+    border-radius: .3rem;
+    color: #6c757d;
+    outline: none;
+    padding: 0 1em;
+    background: none;
+    transition: border-color .2s ease-in-out;
+    font-size: 13px;
+    background-color: #fff;
+}
+
+/* Oculto todo contenido extra que este dentro de inputs como flechas o indicadores invasivos */
+.input::-webkit-inner-spin-button, .input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Activo la transisión de foco cuando el input esta seleccionado */
+.input:focus { border-color: #5089de; }
+
+.carta__label {
+    position: absolute;
+    left: 0.4em;
+    top: 0.80em;
+    padding: 0 0.5rem;
+    color: #ced4da;
+    background-color: #fff;
+    user-select: none;
+    font-size: 13px;
+    transition: top 230ms ease-in, left 230ms ease-in, font-size 230ms ease-in;
+    cursor: text;
+}
+
+/* Animación del label al ser seleccionado un input */
+.input:focus ~ .carta__label {
+    color: #5089de;
+}
+
+.input:focus ~ .carta__label, .input:not(:placeholder-shown).input:not(:focus) ~ .carta__label {
+    top: -0.60em;
+    font-size: 0.7em;
+    left: 0.6em;
+}
+
+.resultado {
+    margin-top: 20px;
+    text-align: center;
+    border-radius: 8px;
+    color: #2a4773;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+/* Botones */
+.contenedor-botones {
+    margin: 0 auto;
+    display: flex;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+.boton {
+    padding: 6px 14px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    background-color: #fff;
+    font-weight: 500;
+}
+
+.boton.izquierda {
+    border-bottom: 1px solid #5089de;
+    border-left: 1px solid #5089de;
+    border-top: 1px solid #5089de;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.boton.medio {
+    border-bottom: 1px solid #5089de;
+    border-left: 1px solid #5089de;
+    border-top: 1px solid #5089de;
+}
+
+.boton.derecha {
+    border: 1px solid #5089de;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.boton:hover {
+    background-color: #5089de;
+    color: #fff;
+}
